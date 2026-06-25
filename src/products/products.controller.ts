@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common';
 
 import { ProductsService } from './products.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -23,30 +25,30 @@ export class ProductsController {
 
   @Post()
   create(
-  @Body() dto: CreateProductDto,
-) {
-  return this.productsService.create(
-    dto.name,
-    dto.quantity,
-  );
-} {
-    return this.productsService.create(body.name, body.quantity);
+    @Body() dto: CreateProductDto,
+  ) {
+    return this.productsService.create(
+      dto.name,
+      dto.quantity,
+    );
   }
 
-@Patch(':id')
-update(
-  @Param('id') id: string,
-  @Body() dto: UpdateProductDto,
-) {
-  return this.productsService.update(
-    Number(id),
-    dto.name,
-  );
-}
-}
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProductDto,
+  ) {
+    return this.productsService.update(
+      Number(id),
+      dto.name,
+    );
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productsService.remove(Number(id));
+    return this.productsService.remove(
+      Number(id),
+    );
   }
 
   @Get(':id')
@@ -54,9 +56,5 @@ update(
     return this.productsService.findOne(
       Number(id),
     );
-
-  
-
-  
   }
 }

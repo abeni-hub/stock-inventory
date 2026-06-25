@@ -22,16 +22,27 @@ export class ProductsController {
   }
 
   @Post()
-  create(@Body() body: any) {
+  create(
+  @Body() dto: CreateProductDto,
+) {
+  return this.productsService.create(
+    dto.name,
+    dto.quantity,
+  );
+} {
     return this.productsService.create(body.name, body.quantity);
   }
 
 @Patch(':id')
-update(@Param('id') id: string, @Body() body: any) {
+update(
+  @Param('id') id: string,
+  @Body() dto: UpdateProductDto,
+) {
   return this.productsService.update(
     Number(id),
-    body.name,
+    dto.name,
   );
+}
 }
   @Delete(':id')
   remove(@Param('id') id: string) {

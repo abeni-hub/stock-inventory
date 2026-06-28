@@ -18,7 +18,16 @@ export class ProductsService {
       where: { id },
     });
   }
-
+  findByName(name: string) {
+  return this.prisma.product.findMany({
+    where: {
+      name: {
+        equals: name,
+        mode: 'insensitive',
+      },
+    },
+  });
+}
   // Create Product
   create(name: string, quantity: number) {
     return this.prisma.product.create({

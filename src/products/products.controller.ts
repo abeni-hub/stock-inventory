@@ -7,8 +7,8 @@ import {
   Delete,
   Param,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
-
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -19,10 +19,16 @@ export class ProductsController {
     private readonly productsService: ProductsService,
   ) {}
 
-  @Get()
-  findAll() {
-    return this.productsService.findAll();
+ @Get()
+findAll(
+  @Query('name') name?: string,
+) {
+  if (name) {
+    return this.productsService.findByName(name);
   }
+
+  return this.productsService.findAll();
+}
 
   @Post()
   create(

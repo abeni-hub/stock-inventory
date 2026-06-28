@@ -6,6 +6,7 @@ import {
   Patch,
   Delete,
   Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 
 import { ProductsService } from './products.service';
@@ -50,11 +51,11 @@ export class ProductsController {
       Number(id),
     );
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(
-      Number(id),
-    );
-  }
+@Get(':id')
+findOne(
+  @Param('id', ParseIntPipe)
+  id: number,
+) {
+  return this.productsService.findOne(id);
+}
 }

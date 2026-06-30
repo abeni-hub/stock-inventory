@@ -52,7 +52,8 @@ findAll(
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe)
+  id: number,) {
     return this.productsService.remove(
       Number(id),
     );

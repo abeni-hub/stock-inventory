@@ -40,16 +40,16 @@ findAll(
     );
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() dto: UpdateProductDto,
-  ) {
-    return this.productsService.update(
-      Number(id),
-      dto.name,
-    );
-  }
+@Patch(':id')
+update(
+  @Param('id', ParseIntPipe) id: number,
+  @Body() dto: UpdateProductDto,
+) {
+  return this.productsService.update(
+    id,
+    dto.name,
+  );
+}
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe)

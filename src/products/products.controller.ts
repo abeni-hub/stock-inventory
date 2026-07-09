@@ -8,28 +8,42 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
+
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
   ) {}
 
- @Get()
-findAll(
-  @Query('name') name?: string,
-) {
-  if (name) {
-    return this.productsService.findByName(name);
+  // Get the currently authenticated user
+  @Get('me')
+  getMe(@Req() req: Request) {
+    return req.user;
   }
 
-  return this.productsService.findAll();
-}
+  // Get all products or search by name
+  @Get()
+  findAll(
+    @Query('name') name?: string,
+  ) {
+    if (name) {
+      return this.productsService.findByName(name);
+    }
 
+    return this.productsService.findAll();
+  }
+
+  // Create a product
   @Post()
   create(
     @Body() dto: CreateProductDto,
@@ -40,29 +54,31 @@ findAll(
     );
   }
 
-@Patch(':id')
-update(
-  @Param('id', ParseIntPipe) id: number,
-  @Body() dto: UpdateProductDto,
-) {
-  return this.productsService.update(
-    id,
-    dto.name,
-  );
-}
-
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe)
-  id: number,) {
-    return this.productsService.remove(
-      Number(id),
+  // Update a product
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProductDto,
+  ) {
+    return this.productsService.update(
+      id,
+      dto.name,
     );
   }
-@Get(':id')
-findOne(
-  @Param('id', ParseIntPipe)
-  id: number,
-) {
-  return this.productsService.findOne(id);
-}
+
+  // Delete a product
+  @Delete(':id')
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.productsService.remove(id);
+  }
+
+  // Get a product by ID
+  @Get(':id')
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.productsService.findOne(id);
+  }
 }

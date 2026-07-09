@@ -8,21 +8,44 @@ export class UsersService {
     private readonly prisma: PrismaService,
   ) {}
 
-  create(data: Prisma.UserCreateInput): Promise<User> {
+  // Create User
+  create(
+    data: Prisma.UserCreateInput,
+  ): Promise<User> {
     return this.prisma.user.create({
       data,
     });
   }
 
-  findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
+  // Find User by Email
+  async findByEmail(
+    email: string,
+  ): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
       where: { email },
     });
+
+    console.log(
+      'UsersService.findByEmail():',
+      user,
+    );
+
+    return user;
   }
 
-  findById(id: number): Promise<User | null> {
-    return this.prisma.user.findUnique({
+  // Find User by ID
+  async findById(
+    id: number,
+  ): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
       where: { id },
     });
+
+    console.log(
+      'UsersService.findById():',
+      user,
+    );
+
+    return user;
   }
 }

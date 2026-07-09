@@ -17,6 +17,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('products')
@@ -67,6 +68,7 @@ export class ProductsController {
   }
 
   // Delete a product
+  @Roles('ADMIN')
   @Delete(':id')
   remove(
     @Param('id', ParseIntPipe) id: number,

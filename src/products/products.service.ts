@@ -3,7 +3,9 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service';
+import { ProductQueryDto } from './dto/product-query.dto';
 
 @Injectable()
 export class ProductsService {
@@ -11,20 +13,76 @@ export class ProductsService {
     private readonly prisma: PrismaService,
   ) {}
 
-  // Get all products
-  findAll() {
-    return this.prisma.product.findMany({
-      include: {
-        warehouse: true,
+  // Get all products with pagination + filtering + sorting
+  async findAll(
+    query: ProductQueryDto,
+  ) {
+    const {
+      page,
+      limit,
+      name,
+      warehouseId,
+      sortBy,
+      order,
+    } = query;
+
+    const where = {
+      ...(name && {
+        name: {
+          contains: name,
+          mode: 'insensitive' as const,
+        },
+      }),
+
+      ...(warehouseId && {
+        warehouseId,
+      }),
+    };
+
+    const total =
+      await this.prisma.product.count({
+        where,
+      });
+
+    const products =
+      await this.prisma.product.findMany({
+        where,
+
+        skip: (page - 1) * limit,
+
+        take: limit,
+
+        orderBy: {
+          [sortBy]: order,
+        },
+
+        include: {
+          warehouse: true,
+        },
+      });
+
+    return {
+      data: products,
+
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(
+          total / limit,
+        ),
       },
-    });
+    };
   }
 
   // Get one product
   async findOne(id: number) {
     const product =
       await this.prisma.product.findUnique({
-        where: { id },
+        where: {
+          id,
+        },
+
         include: {
           warehouse: true,
         },
@@ -48,6 +106,7 @@ export class ProductsService {
           mode: 'insensitive',
         },
       },
+
       include: {
         warehouse: true,
       },
@@ -76,10 +135,11 @@ export class ProductsService {
       );
     }
 
-    // Check if warehouse exists
     const warehouse =
       await this.prisma.warehouse.findUnique({
-        where: { id: warehouseId },
+        where: {
+          id: warehouseId,
+        },
       });
 
     if (!warehouse) {
@@ -92,12 +152,14 @@ export class ProductsService {
       data: {
         name,
         quantity,
+
         warehouse: {
           connect: {
             id: warehouseId,
           },
         },
       },
+
       include: {
         warehouse: true,
       },
@@ -105,10 +167,15 @@ export class ProductsService {
   }
 
   // Update product
-  async update(id: number, name: string) {
+  async update(
+    id: number,
+    name: string,
+  ) {
     const product =
       await this.prisma.product.findUnique({
-        where: { id },
+        where: {
+          id,
+        },
       });
 
     if (!product) {
@@ -124,6 +191,7 @@ export class ProductsService {
             equals: name,
             mode: 'insensitive',
           },
+
           NOT: {
             id,
           },
@@ -137,10 +205,14 @@ export class ProductsService {
     }
 
     return this.prisma.product.update({
-      where: { id },
+      where: {
+        id,
+      },
+
       data: {
         name,
       },
+
       include: {
         warehouse: true,
       },
@@ -151,7 +223,9 @@ export class ProductsService {
   async remove(id: number) {
     const product =
       await this.prisma.product.findUnique({
-        where: { id },
+        where: {
+          id,
+        },
       });
 
     if (!product) {
@@ -161,7 +235,9 @@ export class ProductsService {
     }
 
     return this.prisma.product.delete({
-      where: { id },
+      where: {
+        id,
+      },
     });
   }
 }

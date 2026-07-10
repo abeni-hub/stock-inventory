@@ -1,20 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ProductsService } from './products/products.service';
 
 @Injectable()
 export class AppService {
-
-  constructor(private readonly productsService: ProductsService) {}
-
   getHello(): string {
-    return 'Hello World!';
+    return 'Inventory API is running!';
   }
-
-  async getAllWarehouseProducts() {
-    
-    const products  = await this.productsService.findAll();
-
-    return products;
-  }
-
 }

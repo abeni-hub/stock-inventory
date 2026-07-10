@@ -37,6 +37,7 @@ export class AuthService {
         email: dto.email,
         password: hashedPassword,
         name: dto.name,
+        role: dto.role, // <-- Added
       });
 
     const { password, ...result } = user;
@@ -79,7 +80,7 @@ export class AuthService {
     const payload = {
       sub: user.id,
       email: user.email,
-      role : user.role,
+      role: user.role,
     };
 
     const access_token =

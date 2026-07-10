@@ -16,6 +16,7 @@ import type { Request } from 'express';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductQueryDto } from './dto/product-query.dto';
 
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -34,16 +35,12 @@ export class ProductsController {
     return req.user;
   }
 
-  // Get all products or search by name
+  // Get all products (pagination + filtering + sorting)
   @Get()
   findAll(
-    @Query('name') name?: string,
+    @Query() query: ProductQueryDto,
   ) {
-    if (name) {
-      return this.productsService.findByName(name);
-    }
-
-    return this.productsService.findAll();
+    return this.productsService.findAll(query);
   }
 
   // Get product by ID

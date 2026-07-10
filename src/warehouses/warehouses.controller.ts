@@ -1,5 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+
 import { WarehousesService } from './warehouses.service';
+
+import { CreateWarehouseDto } from './dto/create-warehouse.dto';
+import { UpdateWarehouseDto } from './dto/update-warehouse.dto';
 
 @Controller('warehouses')
 export class WarehousesController {
@@ -7,8 +20,50 @@ export class WarehousesController {
     private readonly warehousesService: WarehousesService,
   ) {}
 
-  @Get('products')
-  getProducts() {
-    return this.warehousesService.getProductsFromWarehouse();
+  @Get()
+  findAll() {
+    return this.warehousesService.findAll();
+  }
+
+  @Get(':id')
+  findOne(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.warehousesService.findOne(id);
+  }
+
+  @Post()
+  create(
+    @Body()
+    dto: CreateWarehouseDto,
+  ) {
+    return this.warehousesService.create(
+      dto.name,
+      dto.location,
+    );
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe)
+    id: number,
+
+    @Body()
+    dto: UpdateWarehouseDto,
+  ) {
+    return this.warehousesService.update(
+      id,
+      dto.name!,
+      dto.location!,
+    );
+  }
+
+  @Delete(':id')
+  remove(
+    @Param('id', ParseIntPipe)
+    id: number,
+  ) {
+    return this.warehousesService.remove(id);
   }
 }

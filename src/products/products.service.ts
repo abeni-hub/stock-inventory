@@ -13,14 +13,22 @@ export class ProductsService {
 
   // Get all products
   findAll() {
-    return this.prisma.product.findMany();
+    return this.prisma.product.findMany({
+      include: {
+        warehouse: true,
+      },
+    });
   }
 
   // Get one product
   async findOne(id: number) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
-    });
+    const product =
+      await this.prisma.product.findUnique({
+        where: { id },
+        include: {
+          warehouse: true,
+        },
+      });
 
     if (!product) {
       throw new NotFoundException(
@@ -40,11 +48,18 @@ export class ProductsService {
           mode: 'insensitive',
         },
       },
+      include: {
+        warehouse: true,
+      },
     });
   }
 
   // Create product
-  async create(name: string, quantity: number) {
+  async create(
+    name: string,
+    quantity: number,
+    warehouseId: number,
+  ) {
     const existingProduct =
       await this.prisma.product.findFirst({
         where: {
@@ -61,19 +76,40 @@ export class ProductsService {
       );
     }
 
+    // Check if warehouse exists
+    const warehouse =
+      await this.prisma.warehouse.findUnique({
+        where: { id: warehouseId },
+      });
+
+    if (!warehouse) {
+      throw new NotFoundException(
+        `Warehouse with ID ${warehouseId} not found`,
+      );
+    }
+
     return this.prisma.product.create({
       data: {
         name,
         quantity,
+        warehouse: {
+          connect: {
+            id: warehouseId,
+          },
+        },
+      },
+      include: {
+        warehouse: true,
       },
     });
   }
 
   // Update product
   async update(id: number, name: string) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
-    });
+    const product =
+      await this.prisma.product.findUnique({
+        where: { id },
+      });
 
     if (!product) {
       throw new NotFoundException(
@@ -105,14 +141,18 @@ export class ProductsService {
       data: {
         name,
       },
+      include: {
+        warehouse: true,
+      },
     });
   }
 
   // Delete product
   async remove(id: number) {
-    const product = await this.prisma.product.findUnique({
-      where: { id },
-    });
+    const product =
+      await this.prisma.product.findUnique({
+        where: { id },
+      });
 
     if (!product) {
       throw new NotFoundException(

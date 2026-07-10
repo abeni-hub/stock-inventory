@@ -15,4 +15,7 @@ export class CreateProductDto {
   @IsInt()
   @Min(0)
   quantity: number;
+
+  @IsInt()
+  warehouseId: number;
 }

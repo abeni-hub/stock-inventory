@@ -8,12 +8,24 @@ datasource db {
 }
 
 model Product {
-  id        Int      @id @default(autoincrement())
-  name      String
-  quantity  Int
-  createdAt DateTime @default(now())
-}
+  id          Int      @id @default(autoincrement())
+  name        String
+  quantity    Int
 
+  warehouseId Int
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+model Warehouse {
+  id         Int       @id @default(autoincrement())
+  name       String
+  location   String
+
+  products   Product[]
+
+  createdAt  DateTime  @default(now())
+}
 enum Role {
   ADMIN
   MANAGER

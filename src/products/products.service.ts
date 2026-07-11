@@ -6,6 +6,7 @@ import {
 
 import { PrismaService } from '../prisma/prisma.service';
 import { ProductQueryDto } from './dto/product-query.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -167,28 +168,30 @@ export class ProductsService {
   }
 
   // Update product
-  async update(
-    id: number,
-    name: string,
-  ) {
-    const product =
-      await this.prisma.product.findUnique({
-        where: {
-          id,
-        },
-      });
+async update(
+  id: number,
+  dto: UpdateProductDto,
+) {
+  const product =
+    await this.prisma.product.findUnique({
+      where: {
+        id,
+      },
+    });
 
-    if (!product) {
-      throw new NotFoundException(
-        `Product with ID ${id} not found`,
-      );
-    }
+  if (!product) {
+    throw new NotFoundException(
+      `Product with ID ${id} not found`,
+    );
+  }
 
+  // Check duplicate name only if a new name is provided
+  if (dto.name) {
     const duplicate =
       await this.prisma.product.findFirst({
         where: {
           name: {
-            equals: name,
+            equals: dto.name,
             mode: 'insensitive',
           },
 
@@ -200,25 +203,55 @@ export class ProductsService {
 
     if (duplicate) {
       throw new ConflictException(
-        `Product "${name}" already exists`,
+        `Product "${dto.name}" already exists`,
       );
     }
-
-    return this.prisma.product.update({
-      where: {
-        id,
-      },
-
-      data: {
-        name,
-      },
-
-      include: {
-        warehouse: true,
-      },
-    });
   }
 
+  // Verify warehouse if changing warehouse
+  if (dto.warehouseId) {
+    const warehouse =
+      await this.prisma.warehouse.findUnique({
+        where: {
+          id: dto.warehouseId,
+        },
+      });
+
+    if (!warehouse) {
+      throw new NotFoundException(
+        `Warehouse with ID ${dto.warehouseId} not found`,
+      );
+    }
+  }
+
+  return this.prisma.product.update({
+    where: {
+      id,
+    },
+
+    data: {
+      ...(dto.name && {
+        name: dto.name,
+      }),
+
+      ...(dto.quantity !== undefined && {
+        quantity: dto.quantity,
+      }),
+
+      ...(dto.warehouseId && {
+        warehouse: {
+          connect: {
+            id: dto.warehouseId,
+          },
+        },
+      }),
+    },
+
+    include: {
+      warehouse: true,
+    },
+  });
+}
   // Delete product
   async remove(id: number) {
     const product =

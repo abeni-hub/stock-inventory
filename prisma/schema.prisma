@@ -14,7 +14,7 @@ model Product {
 
   warehouseId Int
   warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
-
+  transactions   StockTransaction[]
   createdAt   DateTime @default(now())
 }
 model Warehouse {
@@ -23,6 +23,7 @@ model Warehouse {
   location   String
 
   products   Product[]
+  transactions  StockTransaction[]
 
   createdAt  DateTime  @default(now())
 }
@@ -43,6 +44,26 @@ model User {
   password  String
   name      String?
   role      Role     @default(EMPLOYEE)
+  transactions  StockTransaction[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model StockTransaction {
+  id           Int              @id @default(autoincrement())
+
+  quantity     Int
+  type         TransactionType
+  reason       String?
+
+  productId    Int
+  product       Product          @relation(fields: [productId], references: [id])
+
+  warehouseId  Int
+  warehouse    Warehouse        @relation(fields: [warehouseId], references: [id])
+
+  userId        Int
+  user          User             @relation(fields: [userId], references: [id])
+
+  createdAt     DateTime         @default(now())
 }

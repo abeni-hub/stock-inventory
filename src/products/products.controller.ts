@@ -31,6 +31,7 @@ import { ProductQueryDto } from './dto/product-query.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @ApiTags('Products')
 @ApiBearerAuth()
@@ -93,7 +94,9 @@ export class ProductsController {
   @Get()
   findAll(
     @Query() query: ProductQueryDto,
+    @CurrentUser() user: any,
   ) {
+    console.log(user);
     return this.productsService.findAll(query);
   }
 

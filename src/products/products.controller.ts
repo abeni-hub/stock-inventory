@@ -57,36 +57,6 @@ export class ProductsController {
   @ApiOperation({
     summary: 'Get all products',
   })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    example: 10,
-  })
-  @ApiQuery({
-    name: 'name',
-    required: false,
-    example: 'Laptop',
-  })
-  @ApiQuery({
-    name: 'warehouseId',
-    required: false,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'sortBy',
-    required: false,
-    example: 'createdAt',
-  })
-  @ApiQuery({
-    name: 'order',
-    required: false,
-    example: 'desc',
-  })
   @ApiResponse({
     status: 200,
     description: 'Products returned successfully',
@@ -94,18 +64,12 @@ export class ProductsController {
   @Get()
   findAll(
     @Query() query: ProductQueryDto,
-    @CurrentUser() user: any,
   ) {
-    console.log(user);
     return this.productsService.findAll(query);
   }
 
   @ApiOperation({
     summary: 'Get product by ID',
-  })
-  @ApiParam({
-    name: 'id',
-    example: 1,
   })
   @ApiResponse({
     status: 200,
@@ -125,9 +89,6 @@ export class ProductsController {
 
   @ApiOperation({
     summary: 'Create a new product',
-  })
-  @ApiBody({
-    type: CreateProductDto,
   })
   @ApiResponse({
     status: 201,
@@ -151,13 +112,6 @@ export class ProductsController {
   @ApiOperation({
     summary: 'Update a product',
   })
-  @ApiParam({
-    name: 'id',
-    example: 1,
-  })
-  @ApiBody({
-    type: UpdateProductDto,
-  })
   @ApiResponse({
     status: 200,
     description: 'Product updated successfully',
@@ -177,10 +131,6 @@ update(
 }
   @ApiOperation({
     summary: 'Delete a product',
-  })
-  @ApiParam({
-    name: 'id',
-    example: 1,
   })
   @ApiResponse({
     status: 200,

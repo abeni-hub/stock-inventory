@@ -32,7 +32,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-
+import { ParseUUIDPipe } from '@nestjs/common';
 @ApiTags('Products')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -81,8 +81,8 @@ export class ProductsController {
   })
   @Get(':id')
   findOne(
-    @Param('id', ParseIntPipe)
-    id: number,
+    @Param('id', ParseUUIDPipe)
+    id: string ,
   ) {
     return this.productsService.findOne(id);
   }
@@ -118,8 +118,8 @@ export class ProductsController {
   })
  @Patch(':id')
 update(
-  @Param('id', ParseIntPipe)
-  id: number,
+  @Param('id', ParseUUIDPipe)
+  id: string,
 
   @Body()
   dto: UpdateProductDto,
@@ -143,8 +143,8 @@ update(
   @Roles('ADMIN')
   @Delete(':id')
   remove(
-    @Param('id', ParseIntPipe)
-    id: number,
+    @Param('id', ParseUUIDPipe )
+    id: string ,
   ) {
     return this.productsService.remove(id);
   }

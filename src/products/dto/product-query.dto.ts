@@ -1,6 +1,4 @@
-import {
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { Type } from 'class-transformer';
 
@@ -9,6 +7,7 @@ import {
   IsInt,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
 } from 'class-validator';
 
@@ -44,13 +43,12 @@ export class ProductQueryDto {
   name?: string;
 
   @ApiPropertyOptional({
-    example: 1,
-    description: 'Filter by warehouse ID',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    description: 'Filter by Warehouse UUID',
   })
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  warehouseId?: number;
+  @IsUUID()
+  warehouseId?: string;
 
   @ApiPropertyOptional({
     enum: ['name', 'quantity', 'createdAt'],

@@ -28,9 +28,16 @@ export class StockTransactionsController {
     @Body() dto: CreateStockTransactionDto,
     @Req() req: Request,
   ) {
+    console.log('Controller user =', req.user);
+
+    console.log(
+      'Controller sub =',
+      (req.user as any)?.sub,
+    );
+
     return this.stockTransactionsService.create(
       dto,
-      (req.user as any).sub,
+      (req.user as any)?.id,
     );
   }
 

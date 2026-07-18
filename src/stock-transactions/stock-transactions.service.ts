@@ -193,12 +193,6 @@ export class StockTransactionsService {
           },
         });
 
-      /*
-      --------------------------
-      Response
-      --------------------------
-      */
-
       return {
         message:
           dto.type === TransactionType.IN

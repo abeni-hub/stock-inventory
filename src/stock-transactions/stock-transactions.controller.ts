@@ -15,6 +15,8 @@ import { RolesGuard } from '../common/guards/roles.guard';
 
 import { StockTransactionsService } from './stock-transactions.service';
 import { CreateStockTransactionDto } from './dto/create-stock-transaction.dto';
+import { Query } from '@nestjs/common';
+import { TransactionQueryDto } from './dto/transaction-query.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('stock-transactions')
@@ -42,10 +44,11 @@ export class StockTransactionsController {
   }
 
   @Get()
-  findAll() {
-    return this.stockTransactionsService.findAll();
-  }
-
+findAll(
+  @Query() query: TransactionQueryDto,
+) {
+  return this.stockTransactionsService.findAll(query);
+}
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.stockTransactionsService.findOne(id);

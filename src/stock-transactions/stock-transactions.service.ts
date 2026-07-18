@@ -13,6 +13,9 @@ import {
 } from '@prisma/client';
 
 import { CreateStockTransactionDto } from './dto/create-stock-transaction.dto';
+import { Query } from '@nestjs/common';
+import { TransactionQueryDto } from './dto/transaction-query.dto';
+
 
 @Injectable()
 export class StockTransactionsService {
@@ -212,11 +215,60 @@ export class StockTransactionsService {
   =====================================================
   */
 
-  async findAll() {
-    return this.prisma.stockTransaction.findMany({
+ async findAll(
+  query: TransactionQueryDto,
+) {
+  const {
+    page,
+    limit,
+    type,
+    productId,
+    warehouseId,
+    userId,
+    sortBy,
+    order,
+  } = query;
+
+  const where = {
+    ...(type && {
+      type,
+    }),
+
+    ...(productId && {
+      productId,
+    }),
+
+    ...(warehouseId && {
+      warehouseId,
+    }),
+
+    ...(userId && {
+      userId,
+    }),
+  };
+
+  const total =
+    await this.prisma.stockTransaction.count({
+      where,
+    });
+
+  const transactions =
+    await this.prisma.stockTransaction.findMany({
+      where,
+
+      skip: (page - 1) * limit,
+
+      take: limit,
+
+      orderBy: {
+        [sortBy]: order,
+      },
+
       include: {
         product: true,
+
         warehouse: true,
+
         user: {
           select: {
             id: true,
@@ -226,13 +278,21 @@ export class StockTransactionsService {
           },
         },
       },
-
-      orderBy: {
-        createdAt: 'desc',
-      },
     });
-  }
 
+  return {
+    data: transactions,
+
+    meta: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(
+        total / limit,
+      ),
+    },
+  };
+}
   /*
   =====================================================
   Get One Transaction

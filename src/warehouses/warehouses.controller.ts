@@ -59,7 +59,7 @@ export class WarehousesController {
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe)
-    id: number,
+    id: string,
   ) {
     return this.warehousesService.findOne(id);
   }
@@ -94,7 +94,7 @@ export class WarehousesController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe)
-    id: number,
+    id: string,
 
     @Body()
     dto: UpdateWarehouseDto,
@@ -125,7 +125,7 @@ export class WarehousesController {
   @Delete(':id')
   remove(
     @Param('id', ParseIntPipe)
-    id: number,
+    id: string,
   ) {
     return this.warehousesService.remove(id);
   }

@@ -1,0 +1,56 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+
+import type { Request } from 'express';
+
+import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from '../common/guards/roles.guard';
+
+import { StockTransactionsService } from './stock-transactions.service';
+import { CreateStockTransactionDto } from './dto/create-stock-transaction.dto';
+import { Query } from '@nestjs/common';
+import { TransactionQueryDto } from './dto/transaction-query.dto';
+
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Controller('stock-transactions')
+export class StockTransactionsController {
+  constructor(
+    private readonly stockTransactionsService: StockTransactionsService,
+  ) {}
+
+  @Post()
+  create(
+    @Body() dto: CreateStockTransactionDto,
+    @Req() req: Request,
+  ) {
+    console.log('Controller user =', req.user);
+
+    console.log(
+      'Controller sub =',
+      (req.user as any)?.sub,
+    );
+
+    return this.stockTransactionsService.create(
+      dto,
+      (req.user as any)?.id,
+    );
+  }
+
+  @Get()
+findAll(
+  @Query() query: TransactionQueryDto,
+) {
+  return this.stockTransactionsService.findAll(query);
+}
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.stockTransactionsService.findOne(id);
+  }
+}

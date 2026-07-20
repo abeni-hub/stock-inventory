@@ -1,7 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-
 import { Type } from 'class-transformer';
-
 import {
   IsIn,
   IsInt,
@@ -11,11 +9,10 @@ import {
   Min,
 } from 'class-validator';
 
-export class ProductQueryDto {
+export class TransactionQueryDto {
   @ApiPropertyOptional({
     example: 1,
     default: 1,
-    description: 'Current page',
   })
   @IsOptional()
   @Type(() => Number)
@@ -26,7 +23,6 @@ export class ProductQueryDto {
   @ApiPropertyOptional({
     example: 10,
     default: 10,
-    description: 'Items per page',
   })
   @IsOptional()
   @Type(() => Number)
@@ -35,41 +31,46 @@ export class ProductQueryDto {
   limit = 10;
 
   @ApiPropertyOptional({
-    example: 'Laptop',
-    description: 'Search product by name',
+    enum: ['IN', 'OUT'],
   })
   @IsOptional()
-  @IsString()
-  name?: string;
+  @IsIn(['IN', 'OUT'])
+  type?: 'IN' | 'OUT';
 
-  @ApiPropertyOptional({
-    example: '550e8400-e29b-41d4-a716-446655440000',
-    description: 'Filter by Warehouse UUID',
-  })
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID()
+  productId?: string;
+
+  @ApiPropertyOptional()
   @IsOptional()
   @IsUUID()
   warehouseId?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsUUID()
+  userId?: string;
+
   @ApiPropertyOptional({
-    enum: ['name', 'quantity', 'createdAt'],
+    enum: [
+      'createdAt',
+      'quantity',
+    ],
     default: 'createdAt',
-    description: 'Sort field',
   })
   @IsOptional()
   @IsIn([
-    'name',
-    'quantity',
     'createdAt',
+    'quantity',
   ])
   sortBy:
-    | 'name'
-    | 'quantity'
-    | 'createdAt' = 'createdAt';
+    | 'createdAt'
+    | 'quantity' = 'createdAt';
 
   @ApiPropertyOptional({
     enum: ['asc', 'desc'],
     default: 'desc',
-    description: 'Sort direction',
   })
   @IsOptional()
   @IsIn([

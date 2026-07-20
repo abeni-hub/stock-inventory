@@ -22,7 +22,7 @@ export class WarehousesService {
   }
 
   // Get one warehouse
-  async findOne(id: number) {
+  async findOne(id: string) {
     const warehouse =
       await this.prisma.warehouse.findUnique({
         where: { id },
@@ -71,7 +71,7 @@ export class WarehousesService {
 
   // Update warehouse
   async update(
-    id: number,
+    id: string,
     name: string,
     location: string,
   ) {
@@ -96,7 +96,7 @@ export class WarehousesService {
   }
 
   // Delete warehouse
-  async remove(id: number) {
+  async remove(id: string) {
     const warehouse =
       await this.prisma.warehouse.findUnique({
         where: { id },
